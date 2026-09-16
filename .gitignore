@@ -1,0 +1,22 @@
+# Build results
+bin/
+obj/
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.user
+*.suo
+
+# SQLite dev database
+**/App_Data/*.db
+**/App_Data/*.db-shm
+**/App_Data/*.db-wal
+
+# User-uploaded avatars
+**/wwwroot/uploads/avatars/*
+!**/wwwroot/uploads/avatars/.gitkeep
+
+# OS files
+.DS_Store
+Thumbs.db
