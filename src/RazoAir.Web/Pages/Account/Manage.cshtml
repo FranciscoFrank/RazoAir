@@ -1,0 +1,55 @@
+@page
+@model RazoAir.Web.Pages.Account.ManageModel
+@{
+    ViewData["Title"] = "My Account";
+}
+
+<section class="narrow-section">
+    <h1 class="page-title">My account</h1>
+    <p class="muted">Update the contact details other travellers and RazoAir staff see.</p>
+
+    @if (Model.StatusMessage is not null)
+    {
+        <p class="alert-success">@Model.StatusMessage</p>
+    }
+    @if (Model.ErrorMessage is not null)
+    {
+        <p class="alert-error">@Model.ErrorMessage</p>
+    }
+
+    <div class="avatar-row">
+        @if (Model.AvatarFileName is not null)
+        {
+            <img class="avatar-preview" src="~/uploads/avatars/@Model.AvatarFileName?v=@DateTime.UtcNow.Ticks" alt="Your avatar" />
+        }
+        else
+        {
+            <span class="avatar avatar-xl">@(Model.Email?.Substring(0, 1).ToUpperInvariant())</span>
+        }
+        @if (Model.AvatarFileName is not null)
+        {
+            <form method="post" asp-page-handler="RemoveAvatar">
+                <button type="submit" class="link-btn">Remove avatar</button>
+            </form>
+        }
+    </div>
+
+    <form method="post" class="stacked-form" enctype="multipart/form-data">
+        <div class="field">
+            <label>Email</label>
+            <input value="@Model.Email" disabled />
+        </div>
+
+        <div class="field">
+            <label asp-for="PhoneNumber">Phone number</label>
+            <input asp-for="PhoneNumber" placeholder="+1 555 123 4567" autocomplete="tel" />
+        </div>
+
+        <div class="field">
+            <label asp-for="Avatar">Avatar</label>
+            <input asp-for="Avatar" type="file" accept="image/png,image/jpeg,image/webp,image/gif" />
+        </div>
+
+        <button type="submit" class="btn btn-accent">Save changes</button>
+    </form>
+</section>
