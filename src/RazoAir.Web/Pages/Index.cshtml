@@ -1,0 +1,103 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "RazoAir — Book Your Flight";
+}
+
+<section class="hero">
+    <div class="hero-copy">
+        <p class="eyebrow">RazoAir</p>
+        <h1>A flight <em>you</em> choose, start to finish.</h1>
+        <p class="lead">
+            Pick your date, departure airport, and carrier, compare flights that overlap
+            in time, and book a specific seat on board in just a few minutes.
+        </p>
+    </div>
+
+    <form method="get" asp-page="/Flights/Search" class="search-card" aria-label="Search flights">
+        <div class="field">
+            <label for="from">From</label>
+            <select id="from" name="from" data-enhance="select" required>
+                <option value="">Select airport</option>
+                @foreach (var airport in Model.Airports)
+                {
+                    <option value="@airport.IataCode">@airport.City (@airport.IataCode)</option>
+                }
+            </select>
+        </div>
+
+        <div class="field">
+            <label for="to">To</label>
+            <select id="to" name="to" data-enhance="select">
+                <option value="">Anywhere</option>
+                @foreach (var airport in Model.Airports)
+                {
+                    <option value="@airport.IataCode">@airport.City (@airport.IataCode)</option>
+                }
+            </select>
+        </div>
+
+        <div class="field">
+            <label for="date">Departure date</label>
+            <input type="date" id="date" name="date" data-enhance="date" value="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" min="@DateTime.Today.ToString("yyyy-MM-dd")" required />
+        </div>
+
+        <div class="field">
+            <label for="airline">Carrier</label>
+            <select id="airline" name="airline" data-enhance="select">
+                <option value="">Any carrier</option>
+                @foreach (var airline in Model.Airlines)
+                {
+                    <option value="@airline.IataCode">@airline.Name</option>
+                }
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-accent search-submit">Search flights</button>
+    </form>
+</section>
+
+<section class="home-stats">
+    <div class="home-stat">
+        <span class="home-stat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-1 .1-1.3.5l-.4.5c-.4.5-.2 1.2.3 1.5L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.5 1 .7 1.5.3l.5-.4c.4-.3.6-.8.5-1.3Z"/></svg>
+        </span>
+        <span class="home-stat-text">
+            <span class="home-stat-number">@Model.FlightCount</span>
+            <span class="home-stat-label">scheduled flights</span>
+        </span>
+    </div>
+    <div class="home-stat">
+        <span class="home-stat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+        </span>
+        <span class="home-stat-text">
+            <span class="home-stat-number">@Model.DestinationCount</span>
+            <span class="home-stat-label">airports in the network</span>
+        </span>
+    </div>
+    <div class="home-stat">
+        <span class="home-stat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v18"/><path d="M6 12H4a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h2"/><path d="M18 9h2a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></svg>
+        </span>
+        <span class="home-stat-text">
+            <span class="home-stat-number">@Model.Airlines.Count</span>
+            <span class="home-stat-label">partner airlines</span>
+        </span>
+    </div>
+</section>
+
+<section class="quick-links">
+    <a class="quick-link" asp-page="/Pilots/Index">
+        <h3>Our pilots</h3>
+        <p>Experience, flight hours, and certifications of the crews you fly with.</p>
+    </a>
+    <a class="quick-link" asp-page="/Airlines/Index">
+        <h3>Airlines</h3>
+        <p>Compare the carriers operating flights on the platform.</p>
+    </a>
+    <a class="quick-link" asp-page="/Booking/Lookup">
+        <h3>My booking</h3>
+        <p>Find your ticket using your booking reference and email.</p>
+    </a>
+</section>
