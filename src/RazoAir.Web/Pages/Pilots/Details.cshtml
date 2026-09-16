@@ -1,0 +1,55 @@
+@page "{id:int}"
+@model RazoAir.Web.Pages.Pilots.DetailsModel
+@{
+    ViewData["Title"] = Model.Pilot.FullName;
+}
+
+<a class="back-link" asp-page="/Pilots/Index">← All pilots</a>
+
+<section class="pilot-profile">
+    <span class="avatar avatar-xl">@Model.Pilot.Initials</span>
+    <div>
+        <h1>@Model.Pilot.FullName</h1>
+        <p class="muted">@Model.Pilot.RankLabel · @Model.Pilot.Airline.Name</p>
+        @if (Model.Pilot.Bio is not null)
+        {
+            <p class="lead">@Model.Pilot.Bio</p>
+        }
+    </div>
+</section>
+
+<div class="stat-strip">
+    <div class="stat">
+        <span class="stat-number">@Model.Pilot.FlightHours.ToString("N0")</span>
+        <span class="stat-label">flight hours</span>
+    </div>
+    <div class="stat">
+        <span class="stat-number">@Model.Pilot.YearsOfExperience</span>
+        <span class="stat-label">years of experience</span>
+    </div>
+    <div class="stat">
+        <span class="stat-number">@Model.Pilot.RankLabel</span>
+        <span class="stat-label">rank</span>
+    </div>
+</div>
+
+@if (Model.Pilot.Certifications is not null)
+{
+    <p class="muted">Certifications: @Model.Pilot.Certifications</p>
+}
+
+@if (Model.UpcomingFlights.Count > 0)
+{
+    <h2>Upcoming flights</h2>
+    <ul class="simple-list">
+        @foreach (var flight in Model.UpcomingFlights)
+        {
+            <li>
+                <a asp-page="/Flights/Details" asp-route-id="@flight.Id">
+                    @flight.FlightNumber · @flight.DepartureAirport.IataCode → @flight.ArrivalAirport.IataCode ·
+                    @flight.DepartureTime.ToString("d MMMM, HH:mm")
+                </a>
+            </li>
+        }
+    </ul>
+}

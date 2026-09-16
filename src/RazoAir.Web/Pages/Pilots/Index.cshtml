@@ -1,0 +1,22 @@
+@page
+@model RazoAir.Web.Pages.Pilots.IndexModel
+@{
+    ViewData["Title"] = "Pilots";
+}
+
+<h1 class="page-title">Our pilots</h1>
+<p class="muted">Experience and flight hours of the crews operating flights on the platform.</p>
+
+<div class="pilot-grid">
+    @foreach (var pilot in Model.Pilots)
+    {
+        <a class="pilot-card" asp-page="Details" asp-route-id="@pilot.Id">
+            <span class="avatar avatar-lg">@pilot.Initials</span>
+            <div>
+                <strong>@pilot.FullName</strong>
+                <span class="muted">@pilot.RankLabel · @pilot.Airline.Name</span>
+                <span class="pilot-hours">@pilot.FlightHours.ToString("N0") flight hours · @pilot.YearsOfExperience yrs experience</span>
+            </div>
+        </a>
+    }
+</div>

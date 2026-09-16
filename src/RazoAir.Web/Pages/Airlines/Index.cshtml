@@ -1,0 +1,25 @@
+@page
+@model RazoAir.Web.Pages.Airlines.IndexModel
+@{
+    ViewData["Title"] = "Airlines";
+}
+
+<h1 class="page-title">Partner airlines</h1>
+<p class="muted">Compare the carriers you can choose between when searching for a flight.</p>
+
+<div class="airline-grid">
+    @foreach (var row in Model.Rows)
+    {
+        <article class="airline-card" style="--airline-color:@row.Airline.AccentColor">
+            <span class="airline-dot airline-dot-lg"></span>
+            <div>
+                <h2>@row.Airline.Name</h2>
+                <p class="muted">@row.Airline.Description</p>
+                <div class="airline-stats">
+                    <span>@row.PilotCount pilots</span>
+                    <span>@row.UpcomingFlightCount upcoming flights</span>
+                </div>
+            </div>
+        </article>
+    }
+</div>
