@@ -1,0 +1,114 @@
+@page
+@model RazoAir.Web.Pages.Flights.SearchModel
+@{
+    ViewData["Title"] = "Search Flights";
+}
+
+<h1 class="page-title">Flights</h1>
+
+<form method="get" class="search-card search-card--compact" aria-label="Refine search">
+    <div class="field">
+        <label for="from">From</label>
+        <select id="from" name="from" data-enhance="select" required>
+            <option value="">Select airport</option>
+            @foreach (var airport in Model.Airports)
+            {
+                <option value="@airport.IataCode" selected="@(airport.IataCode == Model.From)">@airport.City (@airport.IataCode)</option>
+            }
+        </select>
+    </div>
+    <div class="field">
+        <label for="to">To</label>
+        <select id="to" name="to" data-enhance="select">
+            <option value="">Anywhere</option>
+            @foreach (var airport in Model.Airports)
+            {
+                <option value="@airport.IataCode" selected="@(airport.IataCode == Model.To)">@airport.City (@airport.IataCode)</option>
+            }
+        </select>
+    </div>
+    <div class="field">
+        <label for="date">Date</label>
+        <input type="date" id="date" name="date" data-enhance="date" value="@Model.Date.ToString("yyyy-MM-dd")" min="@DateTime.Today.ToString("yyyy-MM-dd")" required />
+    </div>
+    <div class="field">
+        <label for="airline">Carrier</label>
+        <select id="airline" name="airline" data-enhance="select">
+            <option value="">Any carrier</option>
+            @foreach (var airline in Model.Airlines)
+            {
+                <option value="@airline.IataCode" selected="@(airline.IataCode == Model.AirlineFilter)">@airline.Name</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-accent search-submit">Update search</button>
+</form>
+
+@if (!Model.HasSearched)
+{
+    <p class="empty-state">Choose a departure airport and date to see available flights.</p>
+}
+else if (Model.Groups.Count == 0)
+{
+    <p class="empty-state">No flights found for this date and route. Try a different date or airport.</p>
+}
+else
+{
+    <div class="flight-groups">
+        @foreach (var group in Model.Groups)
+        {
+            <section class="flight-group">
+                <div class="flight-group-header">
+                    <h2>@group.From.City (@group.From.IataCode) → @group.To.City (@group.To.IataCode)</h2>
+                    @if (group.Options.Count > 1)
+                    {
+                        <span class="flight-group-time">Departs @group.EarliestDeparture.ToString("HH:mm")–@group.LatestDeparture.ToString("HH:mm"), @group.EarliestDeparture.ToString("d MMMM")</span>
+                    }
+                    else
+                    {
+                        <span class="flight-group-time">Departs @group.EarliestDeparture.ToString("HH:mm"), @group.EarliestDeparture.ToString("d MMMM")</span>
+                    }
+                    @if (group.Options.Count > 1)
+                    {
+                        <span class="badge-options">@group.Options.Count carrier options</span>
+                    }
+                </div>
+
+                <div class="flight-options">
+                    @foreach (var flight in group.Options)
+                    {
+                        <article class="flight-card">
+                            <div class="flight-card-airline" style="--airline-color:@flight.Airline.AccentColor">
+                                <span class="airline-dot"></span>
+                                <div>
+                                    <strong>@flight.Airline.Name</strong>
+                                    <span class="muted">flight @flight.FlightNumber · @flight.Aircraft.Manufacturer @flight.Aircraft.Model</span>
+                                </div>
+                            </div>
+
+                            <div class="flight-card-times">
+                                <div>
+                                    <span class="time">@flight.DepartureTime.ToString("HH:mm")</span>
+                                    <span class="muted">@flight.DepartureAirport.IataCode</span>
+                                </div>
+                                <div class="flight-duration">
+                                    <span class="muted">@($"{(int)flight.Duration.TotalHours}h {flight.Duration.Minutes}m")</span>
+                                    <div class="duration-line"></div>
+                                </div>
+                                <div>
+                                    <span class="time">@flight.ArrivalTime.ToString("HH:mm")</span>
+                                    <span class="muted">@flight.ArrivalAirport.IataCode</span>
+                                </div>
+                            </div>
+
+                            <div class="flight-card-price">
+                                <span class="price">from $@flight.EconomyPrice.ToString("N0")</span>
+                                <a class="btn btn-accent" asp-page="/Flights/Details" asp-route-id="@flight.Id">Select</a>
+                            </div>
+                        </article>
+                    }
+                </div>
+            </section>
+        }
+    </div>
+}

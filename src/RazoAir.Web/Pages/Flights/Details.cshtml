@@ -1,0 +1,94 @@
+@page "{id:int}"
+@model RazoAir.Web.Pages.Flights.DetailsModel
+@{
+    ViewData["Title"] = $"{Model.Flight.DepartureAirport.IataCode} → {Model.Flight.ArrivalAirport.IataCode}";
+    var seatsByRow = Model.Seats.GroupBy(s => s.Row).OrderBy(g => g.Key).ToList();
+}
+
+<a class="back-link" asp-page="/Flights/Search" asp-route-from="@Model.Flight.DepartureAirport.IataCode" asp-route-date="@Model.Flight.DepartureTime.ToString("yyyy-MM-dd")">← Back to results</a>
+
+<section class="flight-summary" style="--airline-color:@Model.Flight.Airline.AccentColor">
+    <div>
+        <p class="eyebrow">@Model.Flight.Airline.Name · flight @Model.Flight.FlightNumber</p>
+        <h1>@Model.Flight.DepartureAirport.City → @Model.Flight.ArrivalAirport.City</h1>
+        <p class="muted">@Model.Flight.Aircraft.Manufacturer @Model.Flight.Aircraft.Model · @Model.Flight.DepartureTime.ToString("d MMMM yyyy")</p>
+    </div>
+    <div class="flight-summary-times">
+        <div>
+            <span class="time">@Model.Flight.DepartureTime.ToString("HH:mm")</span>
+            <span class="muted">@Model.Flight.DepartureAirport.Name (@Model.Flight.DepartureAirport.IataCode)</span>
+        </div>
+        <div class="flight-duration">
+            <span class="muted">@($"{(int)Model.Flight.Duration.TotalHours}h {Model.Flight.Duration.Minutes}m")</span>
+            <div class="duration-line"></div>
+        </div>
+        <div>
+            <span class="time">@Model.Flight.ArrivalTime.ToString("HH:mm")</span>
+            <span class="muted">@Model.Flight.ArrivalAirport.Name (@Model.Flight.ArrivalAirport.IataCode)</span>
+        </div>
+    </div>
+</section>
+
+<section class="crew-section">
+    <h2>Crew</h2>
+    <div class="crew-cards">
+        <a class="crew-card" asp-page="/Pilots/Details" asp-route-id="@Model.Flight.Captain.Id">
+            <span class="avatar">@Model.Flight.Captain.Initials</span>
+            <div>
+                <strong>@Model.Flight.Captain.FullName</strong>
+                <span class="muted">@Model.Flight.Captain.RankLabel · @Model.Flight.Captain.FlightHours.ToString("N0") flight hours</span>
+            </div>
+        </a>
+        <a class="crew-card" asp-page="/Pilots/Details" asp-route-id="@Model.Flight.FirstOfficer.Id">
+            <span class="avatar">@Model.Flight.FirstOfficer.Initials</span>
+            <div>
+                <strong>@Model.Flight.FirstOfficer.FullName</strong>
+                <span class="muted">@Model.Flight.FirstOfficer.RankLabel · @Model.Flight.FirstOfficer.FlightHours.ToString("N0") flight hours</span>
+            </div>
+        </a>
+    </div>
+</section>
+
+<section class="seat-section">
+    <h2>Choose your seat</h2>
+    <p class="muted">Economy from $@Model.Flight.EconomyPrice.ToString("N0") · Business from $@Model.Flight.BusinessPrice.ToString("N0")</p>
+
+    <form method="get" asp-page="/Booking/Create" class="seat-form">
+        <input type="hidden" name="flightId" value="@Model.Flight.Id" />
+
+        <div class="seat-legend">
+            <span><i class="seat-swatch seat-economy"></i> Economy</span>
+            <span><i class="seat-swatch seat-business"></i> Business</span>
+            <span><i class="seat-swatch seat-booked"></i> Booked</span>
+            <span><i class="seat-swatch seat-selected"></i> Selected</span>
+        </div>
+
+        <div class="seat-map">
+            @foreach (var row in seatsByRow)
+            {
+                <div class="seat-row">
+                    <span class="row-number">@row.Key</span>
+                    @{ var i = 0; }
+                    @foreach (var letter in Model.Columns)
+                    {
+                        var seat = row.FirstOrDefault(s => s.Letter == letter.ToString());
+                        if (i == Model.AisleIndex)
+                        {
+                            <span class="aisle-gap"></span>
+                        }
+                        if (seat is not null)
+                        {
+                            var booked = Model.BookedSeatIds.Contains(seat.Id);
+                            var seatClassName = seat.SeatClass == SeatClass.Business ? "seat-business" : "seat-economy";
+                            <input type="radio" name="seatId" value="@seat.Id" id="seat-@seat.Id" class="seat-radio" disabled="@booked" required="@(!booked)" />
+                            <label for="seat-@seat.Id" class="seat @seatClassName @(booked ? "seat-booked" : "")" title="Seat @seat.Number">@seat.Letter</label>
+                        }
+                        i++;
+                    }
+                </div>
+            }
+        </div>
+
+        <button type="submit" class="btn btn-accent seat-submit">Continue booking</button>
+    </form>
+</section>
