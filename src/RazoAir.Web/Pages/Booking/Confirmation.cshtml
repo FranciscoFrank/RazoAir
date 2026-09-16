@@ -1,0 +1,69 @@
+@page "{reference}"
+@model RazoAir.Web.Pages.Booking.ConfirmationModel
+@{
+    ViewData["Title"] = "Booking Confirmed";
+    var flight = Model.Ticket.Flight;
+}
+
+<section class="confirmation">
+    <p class="eyebrow">Booking confirmed</p>
+    <h1>Thank you, @Model.Ticket.PassengerFullName.Split(' ')[0]!</h1>
+    <p class="lead">Your ticket for flight @flight.FlightNumber is booked. You'll need the booking reference below to find it later.</p>
+
+    <div class="ticket" style="--airline-color:@flight.Airline.AccentColor">
+        <div class="ticket-header">
+            <div>
+                <span class="eyebrow">@flight.Airline.Name</span>
+                <h2>@flight.DepartureAirport.IataCode → @flight.ArrivalAirport.IataCode</h2>
+            </div>
+            <div class="ticket-reference">
+                <span class="muted">Booking reference</span>
+                <strong>@Model.Ticket.BookingReference</strong>
+            </div>
+        </div>
+
+        <div class="ticket-body">
+            <div>
+                <span class="muted">Passenger</span>
+                <strong>@Model.Ticket.PassengerFullName</strong>
+            </div>
+            <div>
+                <span class="muted">Flight</span>
+                <strong>@flight.FlightNumber</strong>
+            </div>
+            <div>
+                <span class="muted">Date</span>
+                <strong>@flight.DepartureTime.ToString("d MMMM yyyy")</strong>
+            </div>
+            <div>
+                <span class="muted">Departure</span>
+                <strong>@flight.DepartureTime.ToString("HH:mm") · @flight.DepartureAirport.Name</strong>
+            </div>
+            <div>
+                <span class="muted">Arrival</span>
+                <strong>@flight.ArrivalTime.ToString("HH:mm") · @flight.ArrivalAirport.Name</strong>
+            </div>
+            <div>
+                <span class="muted">Seat</span>
+                <strong>@Model.Ticket.Seat.Number (@(Model.Ticket.Seat.SeatClass == SeatClass.Business ? "business" : "economy"))</strong>
+            </div>
+            <div>
+                <span class="muted">Aircraft</span>
+                <strong>@flight.Aircraft.Manufacturer @flight.Aircraft.Model</strong>
+            </div>
+            <div>
+                <span class="muted">Crew</span>
+                <strong>@flight.Captain.FullName, @flight.FirstOfficer.FullName</strong>
+            </div>
+            <div class="ticket-price">
+                <span class="muted">Total paid</span>
+                <strong>$@Model.Ticket.PricePaid.ToString("N0")</strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="confirmation-actions">
+        <a class="btn btn-ghost" asp-page="/Index">Back home</a>
+        <a class="btn btn-accent" asp-page="/Booking/Lookup">Find another booking</a>
+    </div>
+</section>

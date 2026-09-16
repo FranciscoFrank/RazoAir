@@ -1,0 +1,65 @@
+@page
+@model RazoAir.Web.Pages.Booking.CreateModel
+@{
+    ViewData["Title"] = "Complete Your Booking";
+}
+
+<h1 class="page-title">Complete your booking</h1>
+
+<div class="booking-layout">
+    <section class="booking-summary" style="--airline-color:@Model.Flight.Airline.AccentColor">
+        <p class="eyebrow">@Model.Flight.Airline.Name · flight @Model.Flight.FlightNumber</p>
+        <h2>@Model.Flight.DepartureAirport.City → @Model.Flight.ArrivalAirport.City</h2>
+        <dl class="summary-list">
+            <div><dt>Date</dt><dd>@Model.Flight.DepartureTime.ToString("d MMMM yyyy")</dd></div>
+            <div><dt>Departure</dt><dd>@Model.Flight.DepartureTime.ToString("HH:mm") · @Model.Flight.DepartureAirport.IataCode</dd></div>
+            <div><dt>Arrival</dt><dd>@Model.Flight.ArrivalTime.ToString("HH:mm") · @Model.Flight.ArrivalAirport.IataCode</dd></div>
+            <div><dt>Aircraft</dt><dd>@Model.Flight.Aircraft.Manufacturer @Model.Flight.Aircraft.Model</dd></div>
+            <div><dt>Seat</dt><dd>@Model.Seat.Number (@(Model.Seat.SeatClass == SeatClass.Business ? "business" : "economy"))</dd></div>
+            <div class="summary-price"><dt>Price</dt><dd>$@Model.Price.ToString("N0")</dd></div>
+        </dl>
+    </section>
+
+    <section class="booking-form">
+        <h2>Passenger details</h2>
+
+        @if (Model.ErrorMessage is not null)
+        {
+            <p class="alert-error">@Model.ErrorMessage</p>
+        }
+
+        <form method="post">
+            <input type="hidden" asp-for="FlightId" />
+            <input type="hidden" asp-for="SeatId" />
+
+            <div class="field">
+                <label asp-for="Passenger.FullName">Full name</label>
+                <input asp-for="Passenger.FullName" placeholder="As shown on your ID" />
+                <span asp-validation-for="Passenger.FullName" class="field-error"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="Passenger.Email">Email</label>
+                <input asp-for="Passenger.Email" type="email" placeholder="you@example.com" />
+                <span asp-validation-for="Passenger.Email" class="field-error"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="Passenger.Phone">Phone (optional)</label>
+                <input asp-for="Passenger.Phone" placeholder="+1 555 123 4567" />
+            </div>
+
+            <div class="field">
+                <label asp-for="Passenger.DocumentNumber">Passport number</label>
+                <input asp-for="Passenger.DocumentNumber" placeholder="Document number" />
+                <span asp-validation-for="Passenger.DocumentNumber" class="field-error"></span>
+            </div>
+
+            <button type="submit" class="btn btn-accent">Confirm booking</button>
+        </form>
+    </section>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
