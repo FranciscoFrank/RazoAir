@@ -2,4 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/RazoAir.Web/RazoAir.Web.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/RazoAir.Tests/RazoAir.Tests.csproj" />
+  </Folder>
 </Solution>
