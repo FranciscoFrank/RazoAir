@@ -63,30 +63,44 @@
             <span><i class="seat-swatch seat-selected"></i> Selected</span>
         </div>
 
-        <div class="seat-map">
-            @foreach (var row in seatsByRow)
-            {
-                <div class="seat-row">
-                    <span class="row-number">@row.Key</span>
-                    @{ var i = 0; }
-                    @foreach (var letter in Model.Columns)
-                    {
-                        var seat = row.FirstOrDefault(s => s.Letter == letter.ToString());
-                        if (i == Model.AisleIndex)
+        <div class="cabin-fuselage">
+            <div class="fuselage-nose">
+                <svg class="cockpit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2C8 2 5 6 5 10v4h14v-4c0-4-3-8-7-8z"/>
+                    <path d="M9 10h6"/>
+                </svg>
+                <span>Flight Deck · Front</span>
+            </div>
+
+            <div class="seat-map">
+                @foreach (var row in seatsByRow)
+                {
+                    <div class="seat-row">
+                        <span class="row-number">@row.Key</span>
+                        @{ var i = 0; }
+                        @foreach (var letter in Model.Columns)
                         {
-                            <span class="aisle-gap"></span>
+                            var seat = row.FirstOrDefault(s => s.Letter == letter.ToString());
+                            if (i == Model.AisleIndex)
+                            {
+                                <span class="aisle-gap"></span>
+                            }
+                            if (seat is not null)
+                            {
+                                var booked = Model.BookedSeatIds.Contains(seat.Id);
+                                var seatClassName = seat.SeatClass == SeatClass.Business ? "seat-business" : "seat-economy";
+                                <input type="radio" name="seatId" value="@seat.Id" id="seat-@seat.Id" class="seat-radio" disabled="@booked" required="@(!booked)" />
+                                <label for="seat-@seat.Id" class="seat @seatClassName @(booked ? "seat-booked" : "")" title="Seat @seat.Number">@seat.Letter</label>
+                            }
+                            i++;
                         }
-                        if (seat is not null)
-                        {
-                            var booked = Model.BookedSeatIds.Contains(seat.Id);
-                            var seatClassName = seat.SeatClass == SeatClass.Business ? "seat-business" : "seat-economy";
-                            <input type="radio" name="seatId" value="@seat.Id" id="seat-@seat.Id" class="seat-radio" disabled="@booked" required="@(!booked)" />
-                            <label for="seat-@seat.Id" class="seat @seatClassName @(booked ? "seat-booked" : "")" title="Seat @seat.Number">@seat.Letter</label>
-                        }
-                        i++;
-                    }
-                </div>
-            }
+                    </div>
+                }
+            </div>
+
+            <div class="fuselage-tail">
+                <span>Rear · Galley</span>
+            </div>
         </div>
 
         <button type="submit" class="btn btn-accent seat-submit">Continue booking</button>

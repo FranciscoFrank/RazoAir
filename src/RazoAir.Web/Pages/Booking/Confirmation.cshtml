@@ -19,7 +19,14 @@
             <div class="ticket-reference">
                 <span class="muted">Booking reference</span>
                 <strong>@Model.Ticket.BookingReference</strong>
+                <span class="badge-confirmed">Electronic Ticket</span>
             </div>
+        </div>
+
+        <div class="ticket-perforation">
+            <span class="ticket-notch notch-left"></span>
+            <span class="perforation-line"></span>
+            <span class="ticket-notch notch-right"></span>
         </div>
 
         <div class="ticket-body">
@@ -59,6 +66,18 @@
                 <span class="muted">Total paid</span>
                 <strong>$@Model.Ticket.PricePaid.ToString("N0")</strong>
             </div>
+        </div>
+
+        <div class="ticket-barcode-section" aria-hidden="true">
+            <div class="barcode-bars">
+                <span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <span class="barcode-code">@Model.Ticket.BookingReference-@flight.FlightNumber</span>
         </div>
     </div>
 

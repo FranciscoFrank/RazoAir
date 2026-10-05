@@ -229,6 +229,8 @@
             setInvalid(root, false);
         });
 
+        select.addEventListener('change', refreshValue);
+
         refreshValue();
         return root;
     }

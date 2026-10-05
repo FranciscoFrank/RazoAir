@@ -7,25 +7,32 @@
 <h1 class="page-title">Flights</h1>
 
 <form method="get" class="search-card search-card--compact" aria-label="Refine search">
-    <div class="field">
-        <label for="from">From</label>
-        <select id="from" name="from" data-enhance="select" required>
-            <option value="">Select airport</option>
-            @foreach (var airport in Model.Airports)
-            {
-                <option value="@airport.IataCode" selected="@(airport.IataCode == Model.From)">@airport.City (@airport.IataCode)</option>
-            }
-        </select>
-    </div>
-    <div class="field">
-        <label for="to">To</label>
-        <select id="to" name="to" data-enhance="select">
-            <option value="">Anywhere</option>
-            @foreach (var airport in Model.Airports)
-            {
-                <option value="@airport.IataCode" selected="@(airport.IataCode == Model.To)">@airport.City (@airport.IataCode)</option>
-            }
-        </select>
+    <div class="field-route-wrapper">
+        <div class="field">
+            <label for="from">From</label>
+            <select id="from" name="from" data-enhance="select" required>
+                <option value="">Select airport</option>
+                @foreach (var airport in Model.Airports)
+                {
+                    <option value="@airport.IataCode" selected="@(airport.IataCode == Model.From)">@airport.City (@airport.IataCode)</option>
+                }
+            </select>
+        </div>
+        <button type="button" class="btn-swap-route" aria-label="Swap departure and destination" title="Swap route">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m7 16-4-4 4-4"/><path d="M3 12h18"/><path d="m17 8 4 4-4 4"/><path d="M21 12H3"/>
+            </svg>
+        </button>
+        <div class="field">
+            <label for="to">To</label>
+            <select id="to" name="to" data-enhance="select">
+                <option value="">Anywhere</option>
+                @foreach (var airport in Model.Airports)
+                {
+                    <option value="@airport.IataCode" selected="@(airport.IataCode == Model.To)">@airport.City (@airport.IataCode)</option>
+                }
+            </select>
+        </div>
     </div>
     <div class="field">
         <label for="date">Date</label>
@@ -87,17 +94,28 @@ else
                             </div>
 
                             <div class="flight-card-times">
-                                <div>
+                                <div class="time-col time-col--dept">
                                     <span class="time">@flight.DepartureTime.ToString("HH:mm")</span>
-                                    <span class="muted">@flight.DepartureAirport.IataCode</span>
+                                    <span class="airport-code">@flight.DepartureAirport.IataCode</span>
+                                    <span class="city-name muted">@flight.DepartureAirport.City</span>
                                 </div>
                                 <div class="flight-duration">
-                                    <span class="muted">@($"{(int)flight.Duration.TotalHours}h {flight.Duration.Minutes}m")</span>
-                                    <div class="duration-line"></div>
+                                    <span class="badge-direct">Direct</span>
+                                    <div class="duration-track">
+                                        <span class="track-node start-node"></span>
+                                        <div class="duration-line">
+                                            <svg class="flight-plane-icon" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+                                            </svg>
+                                        </div>
+                                        <span class="track-node end-node"></span>
+                                    </div>
+                                    <span class="duration-text muted">@($"{(int)flight.Duration.TotalHours}h {flight.Duration.Minutes}m")</span>
                                 </div>
-                                <div>
+                                <div class="time-col time-col--arr">
                                     <span class="time">@flight.ArrivalTime.ToString("HH:mm")</span>
-                                    <span class="muted">@flight.ArrivalAirport.IataCode</span>
+                                    <span class="airport-code">@flight.ArrivalAirport.IataCode</span>
+                                    <span class="city-name muted">@flight.ArrivalAirport.City</span>
                                 </div>
                             </div>
 

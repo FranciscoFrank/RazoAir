@@ -15,26 +15,34 @@
     </div>
 
     <form method="get" asp-page="/Flights/Search" class="search-card" aria-label="Search flights">
-        <div class="field">
-            <label for="from">From</label>
-            <select id="from" name="from" data-enhance="select" required>
-                <option value="">Select airport</option>
-                @foreach (var airport in Model.Airports)
-                {
-                    <option value="@airport.IataCode">@airport.City (@airport.IataCode)</option>
-                }
-            </select>
-        </div>
+        <div class="field-route-wrapper">
+            <div class="field">
+                <label for="from">From</label>
+                <select id="from" name="from" data-enhance="select" required>
+                    <option value="">Select airport</option>
+                    @foreach (var airport in Model.Airports)
+                    {
+                        <option value="@airport.IataCode">@airport.City (@airport.IataCode)</option>
+                    }
+                </select>
+            </div>
 
-        <div class="field">
-            <label for="to">To</label>
-            <select id="to" name="to" data-enhance="select">
-                <option value="">Anywhere</option>
-                @foreach (var airport in Model.Airports)
-                {
-                    <option value="@airport.IataCode">@airport.City (@airport.IataCode)</option>
-                }
-            </select>
+            <button type="button" class="btn-swap-route" aria-label="Swap departure and destination" title="Swap route">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m7 16-4-4 4-4"/><path d="M3 12h18"/><path d="m17 8 4 4-4 4"/><path d="M21 12H3"/>
+                </svg>
+            </button>
+
+            <div class="field">
+                <label for="to">To</label>
+                <select id="to" name="to" data-enhance="select">
+                    <option value="">Anywhere</option>
+                    @foreach (var airport in Model.Airports)
+                    {
+                        <option value="@airport.IataCode">@airport.City (@airport.IataCode)</option>
+                    }
+                </select>
+            </div>
         </div>
 
         <div class="field">
