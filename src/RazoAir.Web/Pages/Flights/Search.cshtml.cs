@@ -28,8 +28,8 @@ public class SearchModel(RazoAirDbContext db) : PageModel
 
     public async Task OnGetAsync(string? from, string? to, DateTime? date, string? airline)
     {
-        Airports = await db.Airports.OrderBy(a => a.City).ToListAsync();
-        Airlines = await db.Airlines.OrderBy(a => a.Name).ToListAsync();
+        Airports = await db.Airports.AsNoTracking().OrderBy(a => a.City).ToListAsync();
+        Airlines = await db.Airlines.AsNoTracking().OrderBy(a => a.Name).ToListAsync();
 
         From = from;
         To = to;
@@ -43,12 +43,16 @@ public class SearchModel(RazoAirDbContext db) : PageModel
 
         HasSearched = true;
 
+        var searchDate = Date.Date;
+        var nextDay = searchDate.AddDays(1);
+
         var query = db.Flights
+            .AsNoTracking()
             .Include(f => f.Airline)
             .Include(f => f.Aircraft)
             .Include(f => f.DepartureAirport)
             .Include(f => f.ArrivalAirport)
-            .Where(f => f.DepartureAirport.IataCode == from && f.DepartureTime.Date == Date.Date);
+            .Where(f => f.DepartureAirport.IataCode == from && f.DepartureTime >= searchDate && f.DepartureTime < nextDay);
 
         if (!string.IsNullOrWhiteSpace(to))
         {

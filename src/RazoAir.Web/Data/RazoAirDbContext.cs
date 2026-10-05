@@ -61,5 +61,11 @@ public class RazoAirDbContext(DbContextOptions<RazoAirDbContext> options) : Iden
 
         modelBuilder.Entity<Flight>()
             .HasIndex(f => new { f.DepartureAirportId, f.DepartureTime });
+
+        modelBuilder.Entity<Flight>()
+            .HasIndex(f => new { f.DepartureAirportId, f.ArrivalAirportId, f.DepartureTime });
+
+        modelBuilder.Entity<Ticket>()
+            .HasIndex(t => t.PassengerEmail);
     }
 }

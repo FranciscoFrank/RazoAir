@@ -14,6 +14,7 @@ public class DetailsModel(RazoAirDbContext db) : PageModel
     public async Task<IActionResult> OnGetAsync(int id)
     {
         var pilot = await db.Pilots
+            .AsNoTracking()
             .Include(p => p.Airline)
             .FirstOrDefaultAsync(p => p.Id == id);
 
@@ -24,10 +25,12 @@ public class DetailsModel(RazoAirDbContext db) : PageModel
 
         Pilot = pilot;
 
+        var today = DateTime.Today;
         UpcomingFlights = await db.Flights
+            .AsNoTracking()
             .Include(f => f.DepartureAirport)
             .Include(f => f.ArrivalAirport)
-            .Where(f => (f.CaptainId == id || f.FirstOfficerId == id) && f.DepartureTime >= DateTime.Today)
+            .Where(f => (f.CaptainId == id || f.FirstOfficerId == id) && f.DepartureTime >= today)
             .OrderBy(f => f.DepartureTime)
             .Take(6)
             .ToListAsync();

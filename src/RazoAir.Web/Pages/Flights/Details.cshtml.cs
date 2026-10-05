@@ -17,6 +17,7 @@ public class DetailsModel(RazoAirDbContext db) : PageModel
     public async Task<IActionResult> OnGetAsync(int id)
     {
         var flight = await db.Flights
+            .AsNoTracking()
             .Include(f => f.Airline)
             .Include(f => f.Aircraft)
             .Include(f => f.DepartureAirport)
@@ -33,11 +34,13 @@ public class DetailsModel(RazoAirDbContext db) : PageModel
         Flight = flight;
 
         Seats = await db.Seats
+            .AsNoTracking()
             .Where(s => s.AircraftId == flight.AircraftId)
             .OrderBy(s => s.Row).ThenBy(s => s.Letter)
             .ToListAsync();
 
         BookedSeatIds = (await db.Tickets
+                .AsNoTracking()
                 .Where(t => t.FlightId == id)
                 .Select(t => t.SeatId)
                 .ToListAsync())

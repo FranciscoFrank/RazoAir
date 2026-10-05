@@ -14,9 +14,9 @@ public class IndexModel(RazoAirDbContext db) : PageModel
 
     public async Task OnGetAsync()
     {
-        Airports = await db.Airports.OrderBy(a => a.City).ToListAsync();
-        Airlines = await db.Airlines.OrderBy(a => a.Name).ToListAsync();
+        Airports = await db.Airports.AsNoTracking().OrderBy(a => a.City).ToListAsync();
+        Airlines = await db.Airlines.AsNoTracking().OrderBy(a => a.Name).ToListAsync();
         FlightCount = await db.Flights.CountAsync();
-        DestinationCount = await db.Airports.CountAsync();
+        DestinationCount = Airports.Count;
     }
 }

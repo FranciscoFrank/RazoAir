@@ -13,14 +13,14 @@ public class IndexModel(RazoAirDbContext db) : PageModel
 
     public async Task OnGetAsync()
     {
-        var airlines = await db.Airlines.OrderBy(a => a.Name).ToListAsync();
-
-        Rows = [];
-        foreach (var airline in airlines)
-        {
-            var pilotCount = await db.Pilots.CountAsync(p => p.AirlineId == airline.Id);
-            var flightCount = await db.Flights.CountAsync(f => f.AirlineId == airline.Id && f.DepartureTime >= DateTime.Today);
-            Rows.Add(new AirlineRow(airline, pilotCount, flightCount));
-        }
+        var today = DateTime.Today;
+        Rows = await db.Airlines
+            .AsNoTracking()
+            .OrderBy(a => a.Name)
+            .Select(a => new AirlineRow(
+                a,
+                db.Pilots.Count(p => p.AirlineId == a.Id),
+                db.Flights.Count(f => f.AirlineId == a.Id && f.DepartureTime >= today)))
+            .ToListAsync();
     }
 }
