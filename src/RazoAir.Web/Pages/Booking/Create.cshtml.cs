@@ -69,16 +69,15 @@ public class CreateModel(RazoAirDbContext db, UserManager<ApplicationUser> userM
             return loaded;
         }
 
+        if (!ModelState.IsValid)
+        {
+            return Page();
+        }
+
         var alreadyBooked = await db.Tickets.AnyAsync(t => t.FlightId == FlightId && t.SeatId == SeatId);
         if (alreadyBooked)
         {
             ErrorMessage = "Sorry, that seat was just booked. Please choose another one.";
-            ModelState.Clear();
-            return Page();
-        }
-
-        if (!ModelState.IsValid)
-        {
             return Page();
         }
 
@@ -107,19 +106,23 @@ public class CreateModel(RazoAirDbContext db, UserManager<ApplicationUser> userM
             return Page();
         }
 
+        TempData["AuthorizedBookingRef"] = ticket.BookingReference;
         return RedirectToPage("/Booking/Confirmation", new { reference = ticket.BookingReference });
     }
 
     private async Task<IActionResult?> LoadFlightAndSeatAsync()
     {
         var flight = await db.Flights
+            .AsNoTracking()
             .Include(f => f.Airline)
             .Include(f => f.Aircraft)
             .Include(f => f.DepartureAirport)
             .Include(f => f.ArrivalAirport)
             .FirstOrDefaultAsync(f => f.Id == FlightId);
 
-        var seat = await db.Seats.FirstOrDefaultAsync(s => s.Id == SeatId);
+        var seat = await db.Seats
+            .AsNoTracking()
+            .FirstOrDefaultAsync(s => s.Id == SeatId);
 
         if (flight is null || seat is null || seat.AircraftId != flight.AircraftId)
         {

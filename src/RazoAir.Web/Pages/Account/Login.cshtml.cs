@@ -2,10 +2,12 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.RateLimiting;
 using RazoAir.Web.Models;
 
 namespace RazoAir.Web.Pages.Account;
 
+[EnableRateLimiting("sensitive")]
 public class LoginModel(SignInManager<ApplicationUser> signInManager) : PageModel
 {
     [BindProperty]
@@ -41,11 +43,17 @@ public class LoginModel(SignInManager<ApplicationUser> signInManager) : PageMode
             return Page();
         }
 
-        var result = await signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+        var result = await signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
 
         if (result.Succeeded)
         {
             return LocalRedirect(returnUrl ?? Url.Content("~/"));
+        }
+
+        if (result.IsLockedOut)
+        {
+            ErrorMessage = "This account is temporarily locked due to repeated failed attempts. Please try again in 5 minutes.";
+            return Page();
         }
 
         ErrorMessage = "Incorrect email or password.";

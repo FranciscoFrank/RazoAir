@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using RazoAir.Web.Models;
+using RazoAir.Web.Security;
 
 namespace RazoAir.Web.Pages.Account;
 
@@ -67,6 +68,15 @@ public class ManageModel(UserManager<ApplicationUser> userManager, IWebHostEnvir
             {
                 ErrorMessage = "Avatar must be a PNG, JPEG, WEBP or GIF image.";
                 return Page();
+            }
+
+            await using (var avatarStream = Avatar.OpenReadStream())
+            {
+                if (!ImageValidator.IsValidImageSignature(avatarStream, extension))
+                {
+                    ErrorMessage = "Avatar file content is corrupted or invalid.";
+                    return Page();
+                }
             }
 
             var avatarsDir = Path.Combine(env.WebRootPath, "uploads", "avatars");

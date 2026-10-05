@@ -1,11 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using RazoAir.Web.Data;
 
 namespace RazoAir.Web.Pages.Booking;
 
+[EnableRateLimiting("sensitive")]
 public class LookupModel(RazoAirDbContext db) : PageModel
 {
     [BindProperty]
@@ -21,8 +23,12 @@ public class LookupModel(RazoAirDbContext db) : PageModel
     public string? ErrorMessage { get; set; }
     public bool Submitted { get; set; }
 
-    public void OnGet()
+    public void OnGet(string? reference = null)
     {
+        if (!string.IsNullOrWhiteSpace(reference))
+        {
+            Reference = reference.Trim().ToUpperInvariant();
+        }
     }
 
     public async Task<IActionResult> OnPostAsync()
@@ -47,6 +53,7 @@ public class LookupModel(RazoAirDbContext db) : PageModel
             return Page();
         }
 
+        TempData["AuthorizedBookingRef"] = reference;
         return RedirectToPage("/Booking/Confirmation", new { reference });
     }
 }
