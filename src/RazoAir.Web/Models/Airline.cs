@@ -15,7 +15,6 @@ public class Airline
     [StringLength(300)]
     public string? Description { get; set; }
 
-    /// <summary>Hex accent colour used for the carrier's badge, e.g. "#5B4B7A".</summary>
     [StringLength(7)]
     public string AccentColor { get; set; } = "#5B4B7A";
 

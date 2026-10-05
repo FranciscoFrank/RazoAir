@@ -14,7 +14,6 @@ public class Pilot
     public int AirlineId { get; set; }
     public Airline Airline { get; set; } = null!;
 
-    /// <summary>Total logged flight hours.</summary>
     public int FlightHours { get; set; }
 
     public int YearsOfExperience { get; set; }

@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RazoAir.Web.Models;
 
-/// <summary>A physical seat that belongs to a specific aircraft (its "seat map" entry).</summary>
 public class Seat
 {
     public int Id { get; set; }
